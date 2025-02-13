@@ -1,5 +1,6 @@
 // Team members: Ruhi Sawant and Saiesh Irukulla
 //Updated
+import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 
 void main() {
@@ -31,7 +32,9 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage>
+    with SingleTickerProviderStateMixin {
+  late ConfettiController _confettiController;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
   String timerString = "00:00";
@@ -39,7 +42,6 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -48,12 +50,19 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2)); 
   }
 
   @override
   void dispose() {
     _controller.dispose();
     super.dispose();
+  }
+
+  void _displayConfetti() {
+    _confettiController.play();
   }
 
   @override
@@ -88,6 +97,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               ),
             ),
           ),
+          Center(
+            child: ConfettiWidget(
+              confettiController: _confettiController, 
+              blastDirectionality: BlastDirectionality.explosive,
+              shouldLoop: false, 
+              colors: [Colors.red, Colors.orange, Colors.red, Colors.blue, Colors.yellow],
+              ),
+          ),
 
           // Side buttons
           Positioned(
@@ -117,8 +134,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 3'),
+                  onPressed: _displayConfetti,
+                  child: const Text('Confetti'),
                 ),
                 const SizedBox(height: 10),
                 ElevatedButton(
