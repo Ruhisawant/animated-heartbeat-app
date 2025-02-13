@@ -134,8 +134,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: SizedBox(
-                  height: 400,
-                  child: Image.asset('assets/images/heart.jpg'),
+                  child: Image.asset('assets/images/heart2.png'),
                 ),
               ),
             ),
