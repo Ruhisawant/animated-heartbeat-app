@@ -2,6 +2,7 @@
 //Updated
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -37,7 +38,10 @@ class _MyHomePageState extends State<MyHomePage>
   late ConfettiController _confettiController;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  String timerString = "00:00";
+  Timer? _timer;
+  int _countdownSeconds = 10;
+  String timerString = "00:05";
+  bool isRunning = false;
 
   @override
   void initState() {
@@ -45,7 +49,7 @@ class _MyHomePageState extends State<MyHomePage>
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
+    )..stop();
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
@@ -58,6 +62,7 @@ class _MyHomePageState extends State<MyHomePage>
   @override
   void dispose() {
     _controller.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -110,39 +115,40 @@ class _MyHomePageState extends State<MyHomePage>
           Positioned(
             top: 300, // button position
             right: 200,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: Text(
+            child: Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
                     timerString,
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 1'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 2'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: _displayConfetti,
-                  child: const Text('Confetti'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 4'),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: _startTimer,
+                    child: const Text('Start'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 2'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: _displayConfetti,
+                    child: const Text('Confetti'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 4'),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
@@ -150,3 +156,4 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 }
+
