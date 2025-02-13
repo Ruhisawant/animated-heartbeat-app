@@ -44,11 +44,11 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   int _messageIndex = 0;
 
   final List<String> messages = [
+    "Will you be my Valentine?",
     "You are the beat of my heart!",
-    "Happy Valentine's Day, my love!",
+    "Happy Valentine's Day!",
     "You make my heart race!",
-    "Forever and always, my Valentine!",
-    "You are my sweetest adventure!",
+    "I love you"
   ];
 
   @override
@@ -64,7 +64,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     );
 
     _confettiController =
-        ConfettiController(duration: const Duration(seconds: 2));
+        ConfettiController(duration: const Duration(seconds: 1));
   }
 
   void _startTimer() {
