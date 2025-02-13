@@ -1,4 +1,5 @@
 // Team members: Ruhi Sawant and Saiesh Irukulla
+
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -128,13 +129,14 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       ),
       body: Stack(
         children: [
+          // Heart
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Center(
               child: ScaleTransition(
                 scale: _scaleAnimation,
                 child: SizedBox(
-                  child: Image.asset('assets/images/heart2.png', height:800, fit:BoxFit.fill),
+                  child: Image.asset('assets/images/heart2.png', height: 800, fit:BoxFit.fill),
                 ),
               ),
             ),
@@ -152,7 +154,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
 
           // Message
           Positioned(
-            top: 400,
+            top: 440,
             left: 0,
             right: 0,
             child: AnimatedSwitcher(
@@ -162,7 +164,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 key: ValueKey<int>(_messageIndex),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
-                  fontSize: 24,
+                  fontSize: 30,
                   fontWeight: FontWeight.bold,
                   color: Colors.black,
                 ),
