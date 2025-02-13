@@ -63,24 +63,23 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Padding(
-        padding: const EdgeInsets.only(top: 200, left: 8, right: 8),
-        child: Column(
-          children: <Widget>[
-            Center(
+      body: Stack(
+        children: [
+          Padding(
+            padding: const EdgeInsets.only(top: 0, left: 8, right: 8),
+            child: Center(
               child: SizedBox(
-                height: 300,
+                height: 800,
                 child: Stack(
                   children: <Widget>[
                     Center(
                       child: ScaleTransition(
                         scale: _scaleAnimation,
                         child: SizedBox(
-                          height: 200,
+                          height: 400,
                           child: Image.asset(
                             'assets/images/heart.jpg',
                           ),
-                          
                         ),
                       ),
                     ),
@@ -88,38 +87,48 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                 ),
               ),
             ),
-            Text(timerString),
-            // Side buttons
-            Positioned(
-              top: 100,
-              right: 20,
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.start,
-                children: [
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 1'),
+          ),
+
+          // Side buttons
+          Positioned(
+            top: 300, // button position
+            right: 200,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.start,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 50),
+                  child: Text(
+                    timerString,
+                    style: const TextStyle(
+                      fontSize: 30,
+                      fontWeight: FontWeight.bold,
+                    ),
                   ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 2'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 3'),
-                  ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 4'),
-                  ),
-                ],
-              ),
+                ),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Button 1'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Button 2'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Button 3'),
+                ),
+                const SizedBox(height: 10),
+                ElevatedButton(
+                  onPressed: () {},
+                  child: const Text('Button 4'),
+                ),
+              ],
             ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
