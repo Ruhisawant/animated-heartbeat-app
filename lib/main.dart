@@ -1,5 +1,3 @@
-// Team members: Ruhi Sawant and Saiesh Irukulla
-//Updated
 import 'package:confetti/confetti.dart';
 import 'package:flutter/material.dart';
 import 'dart:async';
@@ -33,15 +31,24 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage>
-    with SingleTickerProviderStateMixin {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   late ConfettiController _confettiController;
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
+  
   Timer? _timer;
-  int _countdownSeconds = 10;
+  int _countdownSeconds = 5;
   String timerString = "00:05";
   bool isRunning = false;
+  int _messageIndex = 0;
+
+  final List<String> messages = [
+    "You are the beat of my heart!",
+    "Happy Valentine's Day, my love!",
+    "You make my heart race!",
+    "Forever and always, my Valentine!",
+    "You are my sweetest adventure!",
+  ];
 
   @override
   void initState() {
@@ -54,7 +61,9 @@ class _MyHomePageState extends State<MyHomePage>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-    _startTimer();
+
+    _confettiController =
+        ConfettiController(duration: const Duration(seconds: 2));
   }
 
   void _startTimer() {
@@ -64,18 +73,15 @@ class _MyHomePageState extends State<MyHomePage>
     _countdownSeconds = 5;
     setState(() {
       isRunning = true;
-      final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
-      final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
-      timerString = "$minutes:$seconds";
+      _updateTimerString();
     });
     _controller.repeat(reverse: true);
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdownSeconds > 0) {
         setState(() {
           _countdownSeconds--;
-          final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
-          final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
-          timerString = "$minutes:$seconds";
+          _updateTimerString();
         });
       } else {
         timer.cancel();
@@ -83,22 +89,33 @@ class _MyHomePageState extends State<MyHomePage>
         setState(() {
           isRunning = false;
         });
+        _displayConfetti();
       }
     });
+  }
 
-    _confettiController =
-        ConfettiController(duration: const Duration(seconds: 2));
+  void _updateTimerString() {
+    final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+    timerString = "$minutes:$seconds";
   }
 
   @override
   void dispose() {
     _controller.dispose();
     _timer?.cancel();
+    _confettiController.dispose();
     super.dispose();
   }
 
   void _displayConfetti() {
     _confettiController.play();
+  }
+
+  void _cycleMessage() {
+    setState(() {
+      _messageIndex = (_messageIndex + 1) % messages.length;
+    });
   }
 
   @override
@@ -111,46 +128,51 @@ class _MyHomePageState extends State<MyHomePage>
       body: Stack(
         children: [
           Padding(
-            padding: const EdgeInsets.only(top: 0, left: 8, right: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Center(
-              child: SizedBox(
-                height: 800,
-                child: Stack(
-                  children: <Widget>[
-                    Center(
-                      child: ScaleTransition(
-                        scale: _scaleAnimation,
-                        child: SizedBox(
-                          height: 400,
-                          child: Image.asset(
-                            'assets/images/heart.jpg',
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
+              child: ScaleTransition(
+                scale: _scaleAnimation,
+                child: SizedBox(
+                  height: 400,
+                  child: Image.asset('assets/images/heart.jpg'),
                 ),
               ),
             ),
           ),
+
+          // Confetti
           Center(
             child: ConfettiWidget(
               confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
-              colors: [
-                Colors.red,
-                Colors.orange,
-                Colors.red,
-                Colors.blue,
-                Colors.yellow
-              ],
+              colors: const [Colors.orange, Colors.green, Colors.blue, Colors.yellow, Colors.purple],
+            ),
+          ),
+
+          // Message
+          Positioned(
+            top: 400,
+            left: 0,
+            right: 0,
+            child: AnimatedSwitcher(
+              duration: const Duration(seconds: 1),
+              child: Text(
+                messages[_messageIndex],
+                key: ValueKey<int>(_messageIndex),
+                textAlign: TextAlign.center,
+                style: const TextStyle(
+                  fontSize: 24,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
             ),
           ),
 
           // Side buttons
           Positioned(
-            top: 300, // button position
+            top: 300,
             right: 200,
             child: Align(
               alignment: Alignment.center,
@@ -169,20 +191,15 @@ class _MyHomePageState extends State<MyHomePage>
                     onPressed: _startTimer,
                     child: const Text('Start'),
                   ),
-                  const SizedBox(height: 10),
-                  ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 2'),
-                  ),
-                  const SizedBox(height: 20),
+                  const SizedBox(height: 30),
                   ElevatedButton(
                     onPressed: _displayConfetti,
                     child: const Text('Confetti'),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: () {},
-                    child: const Text('Button 4'),
+                    onPressed: _cycleMessage,
+                    child: const Text('Show Message'),
                   ),
                 ],
               ),
