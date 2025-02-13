@@ -1,6 +1,7 @@
 // Team members: Ruhi Sawant and Saiesh Irukulla
-//Updated
+
 import 'package:flutter/material.dart';
+import 'dart:async';
 
 void main() {
   runApp(const MyApp());
@@ -34,12 +35,14 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
   late AnimationController _controller;
   late Animation<double> _scaleAnimation;
-  String timerString = "00:00";
+  Timer? _timer;
+  int _countdownSeconds = 10;
+  String timerString = "10";
 
   @override
   void initState() {
     super.initState();
-    
+
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
@@ -48,11 +51,30 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_countdownSeconds > 0) {
+        setState(() {
+          _countdownSeconds--;
+          final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
+          final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+          timerString = "$minutes:$seconds";
+        });
+      } else {
+        timer.cancel();
+        _controller.stop();
+      }
+    });
   }
 
   @override
   void dispose() {
     _controller.dispose();
+    _timer?.cancel();
     super.dispose();
   }
 
@@ -93,39 +115,40 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           Positioned(
             top: 300, // button position
             right: 200,
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.start,
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 50),
-                  child: Text(
+            child: Align(
+              alignment: Alignment.center,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Text(
                     timerString,
                     style: const TextStyle(
                       fontSize: 30,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
-                ),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 1'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 2'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 3'),
-                ),
-                const SizedBox(height: 10),
-                ElevatedButton(
-                  onPressed: () {},
-                  child: const Text('Button 4'),
-                ),
-              ],
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Start'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Stop'),
+                  ),
+                  const SizedBox(height: 20),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 3'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 4'),
+                  ),
+                ],
+              ),
             ),
           ),
         ],
