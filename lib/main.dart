@@ -54,9 +54,40 @@ class _MyHomePageState extends State<MyHomePage>
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
+    _startTimer();
+  }
+
+  void _startTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _countdownSeconds = 5;
+    setState(() {
+      isRunning = true;
+      final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
+      final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+      timerString = "$minutes:$seconds";
+    });
+    _controller.repeat(reverse: true);
+    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (_countdownSeconds > 0) {
+        setState(() {
+          _countdownSeconds--;
+          final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
+          final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+          timerString = "$minutes:$seconds";
+        });
+      } else {
+        timer.cancel();
+        _controller.stop();
+        setState(() {
+          isRunning = false;
+        });
+      }
+    });
 
     _confettiController =
-        ConfettiController(duration: const Duration(seconds: 2)); 
+        ConfettiController(duration: const Duration(seconds: 2));
   }
 
   @override
@@ -104,11 +135,17 @@ class _MyHomePageState extends State<MyHomePage>
           ),
           Center(
             child: ConfettiWidget(
-              confettiController: _confettiController, 
+              confettiController: _confettiController,
               blastDirectionality: BlastDirectionality.explosive,
-              shouldLoop: false, 
-              colors: [Colors.red, Colors.orange, Colors.red, Colors.blue, Colors.yellow],
-              ),
+              shouldLoop: false,
+              colors: [
+                Colors.red,
+                Colors.orange,
+                Colors.red,
+                Colors.blue,
+                Colors.yellow
+              ],
+            ),
           ),
 
           // Side buttons
@@ -156,4 +193,3 @@ class _MyHomePageState extends State<MyHomePage>
     );
   }
 }
-
