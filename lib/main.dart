@@ -33,15 +33,15 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
-  late ConfettiController _confettiController;
-  late AnimationController _controller;
-  late Animation<double> _scaleAnimation;
+  late ConfettiController confettiController;
+  late AnimationController controller;
+  late Animation<double> scaleAnimation;
   
-  Timer? _timer;
-  int _countdownSeconds = 5;
+  Timer? timer;
+  int countdownSeconds = 5;
   String timerString = "00:05";
   bool isRunning = false;
-  int _messageIndex = 0;
+  int messageIndex = 0;
 
   final List<String> messages = [
     "Will you be my Valentine?",
@@ -54,68 +54,68 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   @override
   void initState() {
     super.initState();
-    _controller = AnimationController(
+    controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
     )..stop();
 
-    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
-      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: controller, curve: Curves.easeInOut),
     );
 
-    _confettiController =
+    confettiController =
         ConfettiController(duration: const Duration(seconds: 1));
   }
 
-  void _startTimer() {
-    if (_timer != null) {
-      _timer!.cancel();
+  void startTimer() {
+    if (timer != null) {
+      timer!.cancel();
     }
-    _countdownSeconds = 5;
+    countdownSeconds = 5;
     setState(() {
       isRunning = true;
-      _updateTimerString();
+      updateTimerString();
     });
-    _controller.repeat(reverse: true);
+    controller.repeat(reverse: true);
 
-    _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
-      if (_countdownSeconds > 0) {
+    timer = Timer.periodic(const Duration(seconds: 1), (timer) {
+      if (countdownSeconds > 0) {
         setState(() {
-          _countdownSeconds--;
-          _updateTimerString();
+          countdownSeconds--;
+          updateTimerString();
         });
       } else {
         timer.cancel();
-        _controller.stop();
+        controller.stop();
         setState(() {
           isRunning = false;
         });
-        _displayConfetti();
+        displayConfetti();
       }
     });
   }
 
-  void _updateTimerString() {
-    final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
-    final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+  void updateTimerString() {
+    final minutes = (countdownSeconds ~/ 60).toString().padLeft(2, '0');
+    final seconds = (countdownSeconds % 60).toString().padLeft(2, '0');
     timerString = "$minutes:$seconds";
   }
 
   @override
   void dispose() {
-    _controller.dispose();
-    _timer?.cancel();
-    _confettiController.dispose();
+    controller.dispose();
+    timer?.cancel();
+    confettiController.dispose();
     super.dispose();
   }
 
-  void _displayConfetti() {
-    _confettiController.play();
+  void displayConfetti() {
+    confettiController.play();
   }
 
-  void _cycleMessage() {
+  void cycleMessage() {
     setState(() {
-      _messageIndex = (_messageIndex + 1) % messages.length;
+      messageIndex = (messageIndex + 1) % messages.length;
     });
   }
 
@@ -132,7 +132,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             padding: const EdgeInsets.symmetric(horizontal: 8),
             child: Center(
               child: ScaleTransition(
-                scale: _scaleAnimation,
+                scale: scaleAnimation,
                 child: SizedBox(
                   child: Image.asset('assets/images/heart2.png', height:800, fit:BoxFit.fill),
                 ),
@@ -143,7 +143,7 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
           // Confetti
           Center(
             child: ConfettiWidget(
-              confettiController: _confettiController,
+              confettiController: confettiController,
               blastDirectionality: BlastDirectionality.explosive,
               shouldLoop: false,
               colors: const [Colors.orange, Colors.green, Colors.blue, Colors.yellow, Colors.purple],
@@ -158,8 +158,8 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
             child: AnimatedSwitcher(
               duration: const Duration(seconds: 1),
               child: Text(
-                messages[_messageIndex],
-                key: ValueKey<int>(_messageIndex),
+                messages[messageIndex],
+                key: ValueKey<int>(messageIndex),
                 textAlign: TextAlign.center,
                 style: const TextStyle(
                   fontSize: 24,
@@ -188,17 +188,17 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: _startTimer,
+                    onPressed: startTimer,
                     child: const Text('Start'),
                   ),
                   const SizedBox(height: 30),
                   ElevatedButton(
-                    onPressed: _displayConfetti,
+                    onPressed: displayConfetti,
                     child: const Text('Confetti'),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: _cycleMessage,
+                    onPressed: cycleMessage,
                     child: const Text('Show Message'),
                   ),
                 ],
