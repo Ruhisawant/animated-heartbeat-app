@@ -12,7 +12,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
-      title: 'Flutter Demo',
+      title: 'Animated Heartbeat App',
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(seedColor: Colors.red),
         useMaterial3: true,
@@ -31,7 +31,30 @@ class MyHomePage extends StatefulWidget {
   State<MyHomePage> createState() => _MyHomePageState();
 }
 
-class _MyHomePageState extends State<MyHomePage> {
+class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateMixin {
+  late AnimationController _controller;
+  late Animation<double> _scaleAnimation;
+  String timerString = "00:00";
+
+  @override
+  void initState() {
+    super.initState();
+    
+    _controller = AnimationController(
+      vsync: this,
+      duration: const Duration(milliseconds: 800),
+    )..repeat(reverse: true);
+
+    _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
+      CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
+    );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -40,23 +63,64 @@ class _MyHomePageState extends State<MyHomePage> {
         backgroundColor: Theme.of(context).colorScheme.inversePrimary,
         title: Text(widget.title),
       ),
-      body: Center(
+      body: Padding(
+        padding: const EdgeInsets.only(top: 200, left: 8, right: 8),
         child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
           children: <Widget>[
-            Image.asset(
-              'assets/images/heart.jpg',
-              width: 200,
-              height: 200,
+            Center(
+              child: SizedBox(
+                height: 300,
+                child: Stack(
+                  children: <Widget>[
+                    Center(
+                      child: ScaleTransition(
+                        scale: _scaleAnimation,
+                        child: SizedBox(
+                          height: 200,
+                          child: Image.asset(
+                            'assets/images/heart.jpg',
+                          ),
+                          
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            Text(timerString),
+            // Side buttons
+            Positioned(
+              top: 100,
+              right: 20,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.start,
+                children: [
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 1'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 2'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 3'),
+                  ),
+                  const SizedBox(height: 10),
+                  ElevatedButton(
+                    onPressed: () {},
+                    child: const Text('Button 4'),
+                  ),
+                ],
+              ),
             ),
           ],
         ),
       ),
-      // floatingActionButton: FloatingActionButton(
-      //   onPressed: _incrementCounter,
-      //   tooltip: 'Increment',
-      //   child: const Icon(Icons.add),
-      // ),
     );
   }
 }
