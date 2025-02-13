@@ -37,25 +37,36 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
   late Animation<double> _scaleAnimation;
   Timer? _timer;
   int _countdownSeconds = 10;
-  String timerString = "10";
+  String timerString = "00:05";
+  bool isRunning = false;
 
   @override
   void initState() {
     super.initState();
-
     _controller = AnimationController(
       vsync: this,
       duration: const Duration(milliseconds: 800),
-    )..repeat(reverse: true);
+    )..stop();
 
     _scaleAnimation = Tween<double>(begin: 1.0, end: 1.3).animate(
       CurvedAnimation(parent: _controller, curve: Curves.easeInOut),
     );
-
-    _startTimer();
   }
 
   void _startTimer() {
+    if (_timer != null) {
+      _timer!.cancel();
+    }
+    _countdownSeconds = 5;
+    setState(() {
+      isRunning = true;
+      final minutes = (_countdownSeconds ~/ 60).toString().padLeft(2, '0');
+      final seconds = (_countdownSeconds % 60).toString().padLeft(2, '0');
+      timerString = "$minutes:$seconds";
+    });
+
+    _controller.repeat(reverse: true);
+
     _timer = Timer.periodic(const Duration(seconds: 1), (timer) {
       if (_countdownSeconds > 0) {
         setState(() {
@@ -67,6 +78,9 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
       } else {
         timer.cancel();
         _controller.stop();
+        setState(() {
+          isRunning = false;
+        });
       }
     });
   }
@@ -129,13 +143,13 @@ class _MyHomePageState extends State<MyHomePage> with SingleTickerProviderStateM
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
-                    onPressed: () {},
+                    onPressed: _startTimer,
                     child: const Text('Start'),
                   ),
                   const SizedBox(height: 10),
                   ElevatedButton(
                     onPressed: () {},
-                    child: const Text('Stop'),
+                    child: const Text('Button 2'),
                   ),
                   const SizedBox(height: 20),
                   ElevatedButton(
